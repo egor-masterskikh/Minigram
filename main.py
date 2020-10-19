@@ -37,6 +37,15 @@ class MinigramWidget(QWidget):
 
         self.setStyleSheet('* {font-family: "%s";}\n' % self.font().family() + stylesheet)
 
+        self.to_register_page_link.clicked.connect(self.go_to_register_page)
+        self.to_login_page_arrow.clicked.connect(self.go_to_login_page)
+
+    def go_to_register_page(self):
+        self.stacked_widget.setCurrentWidget(self.register_widget)
+
+    def go_to_login_page(self):
+        self.stacked_widget.setCurrentWidget(self.login_widget)
+
     def set_font(self, family_name):
         font_db = QFontDatabase()
         font_db.addApplicationFont(
