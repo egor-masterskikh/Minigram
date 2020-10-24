@@ -2,8 +2,18 @@ from MyFavouriteColors import COLORS
 
 
 stylesheet = """
-QStackedWidget {
+#CustomWindow {
     background-color: white;
+    border-radius: 10px;
+}
+
+#delimiter {
+    background-color: %s;
+}
+
+#title {
+    padding-right: 92px;
+    color: %s;
 }
 
 #login_widget QLineEdit, #register_widget QLineEdit {
@@ -48,5 +58,6 @@ QCommandLinkButton {
 #length_validator {
     margin-top: 20px;
 }
-""" % (COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Кобальт синий'], COLORS['Текст на песочном'],
-       COLORS['Карминово-красный'], COLORS['Сбербанк'])
+""" % (COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'],
+       COLORS['Кобальт синий'], COLORS['Текст на песочном'], COLORS['Карминово-красный'],
+       COLORS['Сбербанк'])

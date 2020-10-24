@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="20px" height="20px" fill="#265915">
+    <path d="M 0 4 L 16 20 L 0 20"/>
+    <path d="M 4 0 L 20 16 L 20 0"/>
+</svg>
