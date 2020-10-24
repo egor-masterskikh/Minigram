@@ -115,7 +115,7 @@ class Ui_MainWindow(object):
         spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.register_layout.addItem(spacerItem5, 0, 1, 1, 1)
         self.register_grid = QtWidgets.QGridLayout()
-        self.register_grid.setContentsMargins(0, 0, 0, 0)
+        self.register_grid.setContentsMargins(30, 0, 30, 0)
         self.register_grid.setSpacing(12)
         self.register_grid.setObjectName("register_grid")
         self.repeat_password_label = QtWidgets.QLabel(self.register_widget)
@@ -333,7 +333,7 @@ class Ui_MainWindow(object):
         self.main_window_grid.addWidget(self.CustomWindow, 0, 0, 1, 1)
 
         self.retranslateUi(MainWindow)
-        self.stacked_widget.setCurrentIndex(0)
+        self.stacked_widget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

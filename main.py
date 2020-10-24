@@ -47,7 +47,7 @@ class MinigramWidget(QWidget, Ui_MainWindow):
             duration=300
         )
         self.register_btn.setStyleSheet('padding: 15px auto; margin-top: 30px;')
-        self.register_grid.addWidget(self.register_btn, 12, 0)
+        self.register_grid.addWidget(self.register_btn, 13, 0)
 
         self.setStyleSheet('* {font-family: "%s";}\n' % self.font().family() + stylesheet)
 

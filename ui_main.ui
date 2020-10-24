@@ -88,7 +88,7 @@
            <item row="0" column="0">
             <widget class="QStackedWidget" name="stacked_widget">
              <property name="currentIndex">
-              <number>0</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="login_widget">
               <layout class="QGridLayout" name="login_layout">
@@ -316,13 +316,13 @@
                <item row="1" column="1">
                 <layout class="QGridLayout" name="register_grid">
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>30</number>
                  </property>
                  <property name="topMargin">
                   <number>0</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>30</number>
                  </property>
                  <property name="bottomMargin">
                   <number>0</number>
