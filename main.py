@@ -29,6 +29,10 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         self.window_btns.leaveEvent = self.hide_btn_icons
         self.title_bar.mouseMoveEvent = self.moveWindow
 
+        self.dialog_window_and_message_edit_splitter.setSizes([1000000, 50])
+        # 1000000 - рандомное большое число, чтобы указать следующим элементом размер строки
+        # сообщения
+
         self.login_btn = QSmoothlyHoveredPushButton(
             'Войти',
             self,

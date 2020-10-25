@@ -2,13 +2,15 @@ from MyFavouriteColors import COLORS
 
 
 stylesheet = """
+#title_bar {
+    background-color: #f0f0f0;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
 #CustomWindow {
     background-color: white;
     border-radius: 10px;
-}
-
-#delimiter {
-    background-color: %s;
 }
 
 #title {
@@ -58,6 +60,35 @@ QCommandLinkButton {
 #length_validator {
     margin-top: 20px;
 }
-""" % (COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'],
+
+#search {
+    margin-right: 10px;
+    padding: 5px 5px 5px 10px;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+}
+
+#search:focus {
+    background-color: white;
+    border: 2px solid %s;
+}
+
+#to_menu_page_btn {
+    background-color: rgba(0, 0, 0, 0);
+    margin-left: 20px;
+}
+
+QListWidget, QTableWidget {
+    border: none;
+}
+
+#message_edit {
+    border: none;
+}
+
+#dialog_window {
+    background-color: %s
+}
+""" % (COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'],
        COLORS['Кобальт синий'], COLORS['Текст на песочном'], COLORS['Карминово-красный'],
-       COLORS['Сбербанк'])
+       COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'])
