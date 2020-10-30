@@ -45,7 +45,7 @@ QCommandLinkButton {
     margin-bottom: 10px;
 }
 
-#register_widget QCheckBox:unchecked {
+#register_widget QCheckBox:unchecked, #register_email_error_label, #register_nick_error_label {
     color: %s;
 }
 

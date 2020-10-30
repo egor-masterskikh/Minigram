@@ -350,7 +350,7 @@ background-color: #62c554;</string>
            <item row="0" column="0">
             <widget class="QStackedWidget" name="stacked_widget">
              <property name="currentIndex">
-              <number>2</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="login_widget">
               <layout class="QGridLayout" name="login_layout">
@@ -592,49 +592,14 @@ background-color: #62c554;</string>
                  <property name="spacing">
                   <number>12</number>
                  </property>
-                 <item row="8" column="0">
-                  <widget class="QLabel" name="repeat_password_label">
-                   <property name="font">
-                    <font>
-                     <pointsize>12</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Повторите пароль</string>
+                 <item row="9" column="0">
+                  <widget class="QLineEdit" name="register_password_edit">
+                   <property name="echoMode">
+                    <enum>QLineEdit::Password</enum>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="register_email_label">
-                   <property name="font">
-                    <font>
-                     <pointsize>12</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Email</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="11" column="0">
-                  <widget class="QCheckBox" name="digits_letters_validator">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Пароль содержит как буквы, так и цифры</string>
-                   </property>
-                   <property name="checkable">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="12" column="0">
+                 <item row="14" column="0">
                   <widget class="QCheckBox" name="passwords_match_validator">
                    <property name="enabled">
                     <bool>false</bool>
@@ -652,64 +617,8 @@ background-color: #62c554;</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="0">
-                  <widget class="QLabel" name="register_nick_label">
-                   <property name="font">
-                    <font>
-                     <pointsize>12</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Придумайте ник</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="0">
-                  <widget class="QLabel" name="valid_symbols_label">
-                   <property name="font">
-                    <font>
-                     <pointsize>8</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Допустимые символы: латиница и нижнее подчёркивание</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="4" column="0">
-                  <widget class="QLineEdit" name="register_nick_edit"/>
-                 </item>
-                 <item row="6" column="0">
-                  <widget class="QLabel" name="register_password_label">
-                   <property name="font">
-                    <font>
-                     <pointsize>12</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Пароль</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="9" column="0">
-                  <widget class="QLineEdit" name="repeat_password_edit">
-                   <property name="echoMode">
-                    <enum>QLineEdit::Password</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QLineEdit" name="register_email_edit"/>
-                 </item>
-                 <item row="7" column="0">
-                  <widget class="QLineEdit" name="register_password_edit">
-                   <property name="echoMode">
-                    <enum>QLineEdit::Password</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="10" column="0">
-                  <widget class="QCheckBox" name="length_validator">
+                 <item row="13" column="0">
+                  <widget class="QCheckBox" name="digits_letters_validator">
                    <property name="enabled">
                     <bool>false</bool>
                    </property>
@@ -719,13 +628,29 @@ background-color: #62c554;</string>
                     </font>
                    </property>
                    <property name="text">
-                    <string>Длина пароля больше 8 символов</string>
+                    <string>Пароль содержит как буквы, так и цифры</string>
                    </property>
                    <property name="checkable">
                     <bool>true</bool>
                    </property>
-                   <property name="checked">
-                    <bool>false</bool>
+                  </widget>
+                 </item>
+                 <item row="11" column="0">
+                  <widget class="QLineEdit" name="repeat_password_edit">
+                   <property name="echoMode">
+                    <enum>QLineEdit::Password</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="register_email_label">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Email</string>
                    </property>
                   </widget>
                  </item>
@@ -746,6 +671,108 @@ background-color: #62c554;</string>
                      <width>25</width>
                      <height>25</height>
                     </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLineEdit" name="register_email_edit"/>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="register_email_error_label">
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="0">
+                  <widget class="QLabel" name="register_nick_label">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Придумайте ник</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="0">
+                  <widget class="QLabel" name="valid_symbols_label">
+                   <property name="font">
+                    <font>
+                     <pointsize>8</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Допускаются латиница, цифры и нижнее подчёркивание</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="10" column="0">
+                  <widget class="QLabel" name="repeat_password_label">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Повторите пароль</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="12" column="0">
+                  <widget class="QCheckBox" name="length_validator">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Длина пароля больше 8 символов</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>true</bool>
+                   </property>
+                   <property name="checked">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="0">
+                  <widget class="QLineEdit" name="register_nick_edit"/>
+                 </item>
+                 <item row="8" column="0">
+                  <widget class="QLabel" name="register_password_label">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Пароль</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="0">
+                  <widget class="QLabel" name="register_nick_error_label">
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string/>
                    </property>
                   </widget>
                  </item>
