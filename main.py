@@ -1,5 +1,5 @@
 from sys import exit, argv
-from PyQt5.QtWidgets import QApplication, QWidget, QSizeGrip
+from PyQt5.QtWidgets import QApplication, QWidget, QSizeGrip, QListWidgetItem
 from PyQt5.QtGui import QIcon, QFontDatabase, QFont, QColor
 from static.stylesheet import stylesheet
 from QSmoothlyHoveredPushButton import QSmoothlyHoveredPushButton
@@ -26,6 +26,7 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
+        self.current_user_email = None
         self.dragPos = None
         self.maximize_btn_side = 10
         self.GLOBAL_STATE = 0
@@ -40,9 +41,8 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         self.window_btns.leaveEvent = self.hide_btn_icons
         self.title_bar.mouseMoveEvent = self.moveWindow
 
-        self.dialog_window_and_message_edit_splitter.setSizes([1000000, 50])
-        # 1000000 - рандомное большое число, чтобы указать следующим элементом размер строки
-        # сообщения
+        self.dialog_window_and_message_edit_splitter.setSizes([1_000_000, 0])
+        # 1000000 - рандомное большое число, чтобы максимально прижать строку ввода к низу
 
         self.login_btn = QSmoothlyHoveredPushButton(
             'Войти',
@@ -52,7 +52,12 @@ class MinigramWidget(QWidget, Ui_MainWindow):
             duration=300
         )
         self.login_btn.setStyleSheet('padding: 15px auto; margin-bottom: 30px; margin-top: 30px;')
-        self.login_grid.addWidget(self.login_btn, 4, 0)
+        self.login_btn.clicked.connect(self.login)
+        self.login_grid.addWidget(self.login_btn, 5, 0)
+
+        self.email_edit.returnPressed.connect(self.login)
+        self.email_edit.setFocus()
+        self.password_edit.returnPressed.connect(self.login)
 
         self.register_btn = QSmoothlyHoveredPushButton(
             'Зарегистрироваться',
@@ -65,8 +70,16 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         self.register_btn.clicked.connect(self.register)
         self.register_grid.addWidget(self.register_btn, 15, 0)
 
+        self.register_email_edit.returnPressed.connect(self.register)
+        self.register_nick_edit.returnPressed.connect(self.register)
+        self.register_password_edit.returnPressed.connect(self.register)
+        self.repeat_password_edit.returnPressed.connect(self.register)
+
         self.register_password_edit.textChanged.connect(self.check_passwords_correctness)
         self.repeat_password_edit.textChanged.connect(self.check_passwords_correctness)
+
+        self.users_list.itemSelectionChanged.connect(self.show_chat)
+        self.message_edit.textChanged.connect(self.set_send_message_btn_visible)
 
         self.setStyleSheet('* {font-family: "%s";}\n' % self.font().family() + stylesheet)
 
@@ -74,6 +87,10 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         self.to_login_page_arrow.clicked.connect(self.go_to_login_page)
 
         self.maximize_restore()
+
+    def set_send_message_btn_visible(self):
+        text = self.message_edit.toPlainText().strip()
+        self.send_message_btn.setVisible(bool(text))
 
     def moveWindow(self, event):
         if self.GLOBAL_STATE:
@@ -112,9 +129,15 @@ class MinigramWidget(QWidget, Ui_MainWindow):
 
     def go_to_register_page(self):
         self.stacked_widget.setCurrentWidget(self.register_widget)
+        self.register_email_edit.setFocus()
 
     def go_to_login_page(self):
         self.stacked_widget.setCurrentWidget(self.login_widget)
+        self.email_edit.setFocus()
+
+    def go_to_main_page(self):
+        self.stacked_widget.setCurrentWidget(self.main_widget)
+        self.show_users()
 
     def set_font(self, family_name):
         font_db = QFontDatabase()
@@ -122,6 +145,30 @@ class MinigramWidget(QWidget, Ui_MainWindow):
             f'https://fonts.googleapis.com/css2?family={family_name}&display=swap'
         )
         self.setFont(QFont(family_name, 12))
+
+    def login(self):
+        self.login_error_label.clear()
+        email = self.email_edit.text().strip()
+
+        found_password_tp = self.db_cursor.execute(
+            """
+            select password from users
+            where email = ?
+            """, (email,)
+        ).fetchone()
+        if not found_password_tp:
+            self.login_error_label.setText('Неверный логин или пароль')
+            return
+
+        entered_password = self.password_edit.text().strip()
+        found_password = found_password_tp[0]
+
+        if not self.verify_password(found_password, entered_password):
+            self.login_error_label.setText('Неверный логин или пароль')
+            return
+
+        self.current_user_email = email
+        self.go_to_main_page()
 
     def register(self):
         self.register_email_error_label.clear()
@@ -159,7 +206,9 @@ class MinigramWidget(QWidget, Ui_MainWindow):
                  self.register_email_error_label, self.register_password_edit,
                  self.repeat_password_edit)
             )
-            self.go_to_login_page()
+
+            self.current_user_email = email
+            self.go_to_main_page()
 
     @staticmethod
     def clear_text_from_widgets(widgets):
@@ -247,6 +296,46 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         else:
             self.passwords_match_validator.setChecked(True)
             return True
+
+    def show_users(self):
+        if not self.current_user_email:
+            self.go_to_login_page()
+
+        chats = self.db_cursor.execute(
+            """
+            select nick from users
+            where id in (
+                select recipient_id from messages
+                where sender_id in (
+                    select id from users
+                    where email = ?
+                )
+            ) or id in (
+                select sender_id from messages
+                where recipient_id in (
+                    select id from users
+                    where email = ?
+                )
+            ) order by nick
+            """, (self.current_user_email, self.current_user_email)
+        ).fetchall()
+
+        self.users_list.clear()
+        self.message_widget.setVisible(False)
+        self.user_info_widget.setVisible(False)
+        for nick, in chats:
+            chat_item = QListWidgetItem(nick)
+            chat_item.setTextAlignment(Qt.AlignCenter)
+            self.users_list.addItem(chat_item)
+
+    def show_chat(self):
+        item = self.users_list.currentItem()
+        self.message_edit.clear()
+        self.message_widget.setVisible(True)
+        self.user_info_widget.setVisible(True)
+        self.send_message_btn.setVisible(False)
+        self.nick.setText(item.text())
+        self.message_edit.setFocus()
 
 
 if __name__ == '__main__':

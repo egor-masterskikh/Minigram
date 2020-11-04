@@ -45,7 +45,8 @@ QCommandLinkButton {
     margin-bottom: 10px;
 }
 
-#register_widget QCheckBox:unchecked, #register_email_error_label, #register_nick_error_label {
+#register_widget QCheckBox:unchecked, #register_email_error_label, #register_nick_error_label, 
+#login_error_label {
     color: %s;
 }
 
@@ -78,8 +79,9 @@ QCommandLinkButton {
     margin-left: 20px;
 }
 
-QListWidget, QTableWidget {
+QListWidget {
     border: none;
+    outline: 0;
 }
 
 #message_edit {
@@ -89,6 +91,45 @@ QListWidget, QTableWidget {
 #dialog_window {
     background-color: %s
 }
+
+#users_list::item {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+#users_list::item:hover {
+    background-color: %s;
+}
+
+#user_list::item:!hover {
+    background-color: white;
+}
+
+#users_list::item:selected {
+    background-color: %s;
+    color: white;
+}
+
+QScrollBar:vertical {
+    border: none;
+    background-color: %s;
+    width: 6px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: %s;
+    border-radius: 3px;
+}
+
+#send_message_btn {
+    background-color: transparent;
+}
+
+#nick {
+    color: black;
+    font-weight:bold;
+}
 """ % (COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'],
        COLORS['Кобальт синий'], COLORS['Текст на песочном'], COLORS['Карминово-красный'],
-       COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'])
+       COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Нейтральный серый'],
+       COLORS['Сбербанк'], COLORS['Нейтральный серый'], COLORS['Асфальт'])

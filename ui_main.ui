@@ -350,7 +350,7 @@ background-color: #62c554;</string>
            <item row="0" column="0">
             <widget class="QStackedWidget" name="stacked_widget">
              <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="login_widget">
               <layout class="QGridLayout" name="login_layout">
@@ -401,17 +401,22 @@ background-color: #62c554;</string>
                   <number>12</number>
                  </property>
                  <item row="5" column="0">
-                  <widget class="QCommandLinkButton" name="to_register_page_link">
-                   <property name="font">
-                    <font>
-                     <family>Segoe UI</family>
-                    </font>
+                  <widget class="QFrame" name="frame_for_login_btn">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
                    </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="0">
+                  <widget class="QCommandLinkButton" name="forgot_password_link">
                    <property name="cursor">
                     <cursorShape>PointingHandCursor</cursorShape>
                    </property>
                    <property name="text">
-                    <string>Регистрация</string>
+                    <string>Забыл пароль?</string>
                    </property>
                    <property name="icon">
                     <iconset theme="none">
@@ -448,18 +453,6 @@ background-color: #62c554;</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="email_label">
-                   <property name="font">
-                    <font>
-                     <pointsize>12</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Email</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="2" column="0">
                   <widget class="QLabel" name="password_label">
                    <property name="font">
@@ -472,13 +465,30 @@ background-color: #62c554;</string>
                    </property>
                   </widget>
                  </item>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="email_label">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Email</string>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="6" column="0">
-                  <widget class="QCommandLinkButton" name="forgot_password_link">
+                  <widget class="QCommandLinkButton" name="to_register_page_link">
+                   <property name="font">
+                    <font>
+                     <family>Segoe UI</family>
+                    </font>
+                   </property>
                    <property name="cursor">
                     <cursorShape>PointingHandCursor</cursorShape>
                    </property>
                    <property name="text">
-                    <string>Забыл пароль?</string>
+                    <string>Регистрация</string>
                    </property>
                    <property name="icon">
                     <iconset theme="none">
@@ -493,12 +503,14 @@ background-color: #62c554;</string>
                   </widget>
                  </item>
                  <item row="4" column="0">
-                  <widget class="QFrame" name="frame_for_login_btn">
-                   <property name="frameShape">
-                    <enum>QFrame::StyledPanel</enum>
+                  <widget class="QLabel" name="login_error_label">
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
                    </property>
-                   <property name="frameShadow">
-                    <enum>QFrame::Raised</enum>
+                   <property name="text">
+                    <string/>
                    </property>
                   </widget>
                  </item>
@@ -882,19 +894,12 @@ background-color: #62c554;</string>
                      </item>
                      <item row="1" column="0" colspan="2">
                       <widget class="QListWidget" name="users_list">
+                       <property name="horizontalScrollBarPolicy">
+                        <enum>Qt::ScrollBarAlwaysOff</enum>
+                       </property>
                        <property name="sizeAdjustPolicy">
                         <enum>QAbstractScrollArea::AdjustToContents</enum>
                        </property>
-                       <item>
-                        <property name="text">
-                         <string>test user 1</string>
-                        </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>test user 2</string>
-                        </property>
-                       </item>
                       </widget>
                      </item>
                     </layout>
@@ -937,14 +942,35 @@ background-color: #62c554;</string>
                          <height>70</height>
                         </size>
                        </property>
+                       <layout class="QGridLayout" name="gridLayout">
+                        <item row="0" column="0">
+                         <widget class="QCommandLinkButton" name="nick">
+                          <property name="font">
+                           <font>
+                            <family>Segoe UI</family>
+                            <pointsize>14</pointsize>
+                           </font>
+                          </property>
+                          <property name="cursor">
+                           <cursorShape>PointingHandCursor</cursorShape>
+                          </property>
+                          <property name="text">
+                           <string/>
+                          </property>
+                          <property name="iconSize">
+                           <size>
+                            <width>0</width>
+                            <height>0</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
                       </widget>
                      </item>
                      <item row="1" column="0">
                       <widget class="QWidget" name="dialog_window_and_message_edit_widget" native="true">
-                       <layout class="QVBoxLayout" name="dialog_window_and_message_edit_widget_grid">
-                        <property name="spacing">
-                         <number>0</number>
-                        </property>
+                       <layout class="QVBoxLayout" name="verticalLayout">
                         <property name="leftMargin">
                          <number>0</number>
                         </property>
@@ -978,33 +1004,71 @@ background-color: #62c554;</string>
                            <property name="wordWrap">
                             <bool>true</bool>
                            </property>
-                           <item>
-                            <property name="text">
-                             <string>test message 1</string>
-                            </property>
-                           </item>
-                           <item>
-                            <property name="text">
-                             <string>test message 2</string>
-                            </property>
-                           </item>
                           </widget>
-                          <widget class="QPlainTextEdit" name="message_edit">
-                           <property name="sizePolicy">
-                            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
-                           </property>
-                           <property name="minimumSize">
-                            <size>
-                             <width>0</width>
-                             <height>50</height>
-                            </size>
-                           </property>
-                           <property name="placeholderText">
-                            <string>Написать сообщение...</string>
-                           </property>
+                          <widget class="QWidget" name="message_widget" native="true">
+                           <layout class="QHBoxLayout" name="message_widget_hbox">
+                            <property name="spacing">
+                             <number>0</number>
+                            </property>
+                            <property name="leftMargin">
+                             <number>0</number>
+                            </property>
+                            <property name="topMargin">
+                             <number>0</number>
+                            </property>
+                            <property name="rightMargin">
+                             <number>0</number>
+                            </property>
+                            <property name="bottomMargin">
+                             <number>0</number>
+                            </property>
+                            <item>
+                             <layout class="QHBoxLayout" name="message_widget_hbox_2">
+                              <property name="spacing">
+                               <number>0</number>
+                              </property>
+                              <item>
+                               <widget class="QPlainTextEdit" name="message_edit">
+                                <property name="horizontalScrollBarPolicy">
+                                 <enum>Qt::ScrollBarAlwaysOff</enum>
+                                </property>
+                                <property name="sizeAdjustPolicy">
+                                 <enum>QAbstractScrollArea::AdjustToContents</enum>
+                                </property>
+                                <property name="placeholderText">
+                                 <string>Написать сообщение...</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="send_message_btn">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="cursor">
+                                 <cursorShape>PointingHandCursor</cursorShape>
+                                </property>
+                                <property name="text">
+                                 <string/>
+                                </property>
+                                <property name="icon">
+                                 <iconset>
+                                  <normaloff>static/send_message.svg</normaloff>static/send_message.svg</iconset>
+                                </property>
+                                <property name="iconSize">
+                                 <size>
+                                  <width>36</width>
+                                  <height>36</height>
+                                 </size>
+                                </property>
+                               </widget>
+                              </item>
+                             </layout>
+                            </item>
+                           </layout>
                           </widget>
                          </widget>
                         </item>
