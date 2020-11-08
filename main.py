@@ -1,5 +1,6 @@
 from sys import exit, argv
-from PyQt5.QtWidgets import QApplication, QWidget, QSizeGrip, QListWidgetItem
+from PyQt5.QtWidgets import QApplication, QWidget, QSizeGrip, QListWidgetItem, QLabel, \
+    QHBoxLayout, QSizePolicy, QPlainTextEdit
 from PyQt5.QtGui import QIcon, QFontDatabase, QFont, QColor
 from static.stylesheet import stylesheet
 from QSmoothlyHoveredPushButton import QSmoothlyHoveredPushButton
@@ -11,6 +12,7 @@ from string import ascii_letters, digits
 import hashlib
 import os
 import binascii
+from datetime import datetime, timezone
 
 
 class MainError(Exception):
@@ -80,6 +82,9 @@ class MinigramWidget(QWidget, Ui_MainWindow):
 
         self.users_list.itemSelectionChanged.connect(self.show_chat)
         self.message_edit.textChanged.connect(self.set_send_message_btn_visible)
+
+        self.send_message_btn.clicked.connect(self.send_message)
+        self.message_edit.keyPressEvent = self.message_edit_key_press_event
 
         self.setStyleSheet('* {font-family: "%s";}\n' % self.font().family() + stylesheet)
 
@@ -243,8 +248,10 @@ class MinigramWidget(QWidget, Ui_MainWindow):
             raise MainError('Кажется, Вы ввели несколько точек подряд')
         elif email.startswith('.') or email.endswith('.'):
             raise MainError('Email не может начинаться с точки или заканчиваться точкой')
-        elif email.count('@') != 1:
-            raise MainError('Символ "@" должен быть, и только один')
+        elif not email.count('@'):
+            raise MainError('Нет символа "@"')
+        elif email.count('@') > 1:
+            raise MainError('Символ "@" должен быть только один')
         same_email = self.db_cursor.execute(
             """
             select email from users
@@ -331,11 +338,124 @@ class MinigramWidget(QWidget, Ui_MainWindow):
     def show_chat(self):
         item = self.users_list.currentItem()
         self.message_edit.clear()
+        self.dialog_window.clear()
         self.message_widget.setVisible(True)
         self.user_info_widget.setVisible(True)
         self.send_message_btn.setVisible(False)
         self.nick.setText(item.text())
         self.message_edit.setFocus()
+
+        sent_messages = self.db_cursor.execute(
+            """
+            select body, timestamp from messages
+            where sender_id = (
+                select id from users
+                where email = ?
+            ) and recipient_id = (
+                select id from users
+                where nick = ?
+            )
+            """, (self.current_user_email, item.text())
+        ).fetchall()
+        received_messages = self.db_cursor.execute(
+            """
+            select body, timestamp from messages
+            where recipient_id = (
+                select id from users
+                where email = ?
+            ) and sender_id = (
+                select id from users
+                where nick = ?
+            )
+            """, (self.current_user_email, item.text())
+        ).fetchall()
+
+        def get_local_datetime(datetime_str):
+            return datetime.fromisoformat(datetime_str).replace(tzinfo=timezone.utc).astimezone(
+                tz=None)
+
+        messages = sorted(
+            map(lambda message: (message[0], get_local_datetime(message[1]), message[2]), (
+                *map(lambda message: (*message, 'sent'), sent_messages),
+                *map(lambda message: (*message, 'received'), received_messages)
+            )), key=lambda message: message[1]
+        )
+
+        for body, timestamp, mode in messages:
+            message_row_widget = QWidget()
+            message_row_widget_hbox = QHBoxLayout(message_row_widget)
+
+            message_widget = QWidget()
+            message_widget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+            message_widget.setStyleSheet('font-size: 12pt; border-radius: 10px;')
+            message_widget_hbox = QHBoxLayout(message_widget)
+
+            message_body_label = QLabel(body)
+            message_body_label.setWordWrap(True)
+            message_body_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+            message_body_label.setCursor(Qt.IBeamCursor)
+
+            message_timestamp_label = QLabel(timestamp.strftime('%H:%M'))
+            message_timestamp_label.setStyleSheet(f'color: {COLORS["Асфальт"]}; margin-top: 10px;')
+
+            message_widget_hbox.addWidget(message_body_label)
+            message_widget_hbox.addWidget(message_timestamp_label)
+
+            margin = QWidget()
+            margin.setMinimumWidth(30)
+
+            if mode == 'sent':
+                message_row_widget_hbox.addWidget(margin)
+                message_row_widget_hbox.addWidget(message_widget)
+                message_widget.setStyleSheet(
+                    message_widget.styleSheet() + f'background-color: {COLORS["Бело-зелёный"]}'
+                )
+            else:
+                message_row_widget_hbox.addWidget(message_widget)
+                message_row_widget_hbox.addWidget(margin)
+                message_widget.setStyleSheet(
+                    message_widget.styleSheet() + 'background-color: white;'
+                )
+
+            message_item = QListWidgetItem()
+            message_item.setFlags(Qt.ItemIsEnabled)
+            message_item.setSizeHint(message_row_widget.sizeHint())
+            self.dialog_window.addItem(message_item)
+            self.dialog_window.setItemWidget(message_item, message_row_widget)
+
+    def send_message(self):
+        body = self.message_edit.toPlainText().strip()
+        if not body:
+            return
+        recipient_id, = self.db_cursor.execute(
+            """
+            select id from users
+            where nick = ?
+            """, (self.nick.text(),)
+        ).fetchone()
+        sender_id, = self.db_cursor.execute(
+            """
+            select id from users
+            where email = ?
+            """, (self.current_user_email,)
+        ).fetchone()
+
+        self.db_cursor.execute(
+            """
+            insert into messages(body, recipient_id, sender_id) values(?, ?, ?)
+            """, (body, recipient_id, sender_id)
+        )
+        self.db.commit()
+
+        self.message_edit.clear()
+        # self.show_chat()
+
+    def message_edit_key_press_event(self, event):
+        if int(event.modifiers()) == Qt.ControlModifier:
+            if event.key() == Qt.Key_Return:
+                self.send_message()
+                return
+        QPlainTextEdit.keyPressEvent(self.message_edit, event)
 
 
 if __name__ == '__main__':

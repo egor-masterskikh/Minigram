@@ -127,9 +127,18 @@ QScrollBar::handle:vertical {
 
 #nick {
     color: black;
-    font-weight:bold;
+    font-weight: bold;
+}
+
+#dialog_window::item:hover {
+    background-color: transparent;
+}
+
+#dialog_window::item QLabel {
+    selection-background-color: %s;
+    selection-color: white;
 }
 """ % (COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'],
        COLORS['Кобальт синий'], COLORS['Текст на песочном'], COLORS['Карминово-красный'],
        COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Нейтральный серый'],
-       COLORS['Сбербанк'], COLORS['Нейтральный серый'], COLORS['Асфальт'])
+       COLORS['Сбербанк'], COLORS['Нейтральный серый'], COLORS['Асфальт'], COLORS['Сбербанк'])
