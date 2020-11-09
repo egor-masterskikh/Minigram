@@ -382,25 +382,12 @@ background-color: #62c554;</string>
                  </property>
                 </spacer>
                </item>
-               <item row="1" column="0">
-                <spacer name="horizontalSpacer">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
                <item row="1" column="1">
                 <layout class="QGridLayout" name="login_grid">
                  <property name="spacing">
                   <number>12</number>
                  </property>
-                 <item row="5" column="0">
+                 <item row="6" column="0">
                   <widget class="QFrame" name="frame_for_login_btn">
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
@@ -410,58 +397,10 @@ background-color: #62c554;</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="7" column="0">
-                  <widget class="QCommandLinkButton" name="forgot_password_link">
-                   <property name="cursor">
-                    <cursorShape>PointingHandCursor</cursorShape>
-                   </property>
-                   <property name="text">
-                    <string>Забыл пароль?</string>
-                   </property>
-                   <property name="icon">
-                    <iconset theme="none">
-                     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
-                   </property>
-                   <property name="iconSize">
-                    <size>
-                     <width>0</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="0">
-                  <widget class="QLineEdit" name="password_edit">
-                   <property name="inputMask">
-                    <string extracomment="0"/>
-                   </property>
-                   <property name="maxLength">
-                    <number>100</number>
-                   </property>
-                   <property name="frame">
-                    <bool>true</bool>
-                   </property>
-                   <property name="echoMode">
-                    <enum>QLineEdit::Password</enum>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="1" column="0">
                   <widget class="QLineEdit" name="email_edit">
                    <property name="maxLength">
                     <number>100</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="password_label">
-                   <property name="font">
-                    <font>
-                     <pointsize>12</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Пароль</string>
                    </property>
                   </widget>
                  </item>
@@ -477,7 +416,7 @@ background-color: #62c554;</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="6" column="0">
+                 <item row="7" column="0">
                   <widget class="QCommandLinkButton" name="to_register_page_link">
                    <property name="font">
                     <font>
@@ -502,6 +441,30 @@ background-color: #62c554;</string>
                    </property>
                   </widget>
                  </item>
+                 <item row="5" column="0">
+                  <widget class="QCheckBox" name="remember_me_checkbox">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Запомнить меня</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="password_label">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Пароль</string>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="4" column="0">
                   <widget class="QLabel" name="login_error_label">
                    <property name="font">
@@ -514,7 +477,36 @@ background-color: #62c554;</string>
                    </property>
                   </widget>
                  </item>
+                 <item row="3" column="0">
+                  <widget class="QLineEdit" name="password_edit">
+                   <property name="inputMask">
+                    <string extracomment="0"/>
+                   </property>
+                   <property name="maxLength">
+                    <number>100</number>
+                   </property>
+                   <property name="frame">
+                    <bool>true</bool>
+                   </property>
+                   <property name="echoMode">
+                    <enum>QLineEdit::Password</enum>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
+               </item>
+               <item row="2" column="1">
+                <spacer name="verticalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
                <item row="0" column="1">
                 <spacer name="verticalSpacer">
@@ -529,15 +521,15 @@ background-color: #62c554;</string>
                  </property>
                 </spacer>
                </item>
-               <item row="2" column="1">
-                <spacer name="verticalSpacer_2">
+               <item row="1" column="0">
+                <spacer name="horizontalSpacer">
                  <property name="orientation">
-                  <enum>Qt::Vertical</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>20</width>
-                   <height>40</height>
+                   <width>40</width>
+                   <height>20</height>
                   </size>
                  </property>
                 </spacer>
@@ -676,7 +668,7 @@ background-color: #62c554;</string>
                    </property>
                    <property name="icon">
                     <iconset>
-                     <normaloff>static/left-arrow.svg</normaloff>static/left-arrow.svg</iconset>
+                     <normaloff>static/left_arrow.svg</normaloff>static/left_arrow.svg</iconset>
                    </property>
                    <property name="iconSize">
                     <size>

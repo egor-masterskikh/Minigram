@@ -138,6 +138,19 @@ QScrollBar::handle:vertical {
     selection-background-color: %s;
     selection-color: white;
 }
+
+#remember_me_checkbox::indicator {
+    width: 20px;
+    height: 20px;
+}
+
+#remember_me_checkbox::indicator:unchecked {
+    image: url("static/unchecked_mark.svg");
+}
+
+#remember_me_checkbox::indicator:checked {
+    image: url("static/checked_mark.svg");
+}
 """ % (COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'],
        COLORS['Кобальт синий'], COLORS['Текст на песочном'], COLORS['Карминово-красный'],
        COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Нейтральный серый'],

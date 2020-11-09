@@ -55,7 +55,7 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         )
         self.login_btn.setStyleSheet('padding: 15px auto; margin-bottom: 30px; margin-top: 30px;')
         self.login_btn.clicked.connect(self.login)
-        self.login_grid.addWidget(self.login_btn, 5, 0)
+        self.login_grid.addWidget(self.login_btn, 6, 0)
 
         self.email_edit.returnPressed.connect(self.login)
         self.email_edit.setFocus()
@@ -90,6 +90,22 @@ class MinigramWidget(QWidget, Ui_MainWindow):
 
         self.to_register_page_link.clicked.connect(self.go_to_register_page)
         self.to_login_page_arrow.clicked.connect(self.go_to_login_page)
+
+        self.login_data_filepath = 'login_data.txt'
+        if os.path.exists(self.login_data_filepath):
+            with open(self.login_data_filepath) as login_data_file:
+                login_data = login_data_file.read().strip().splitlines()
+                if len(login_data) == 2:
+                    email, password_hash = login_data
+                    user_id = self.db_cursor.execute(
+                        """
+                        select id from users
+                        where email = ? and password = ?
+                        """, (email, password_hash)
+                    ).fetchone()
+                    if user_id:
+                        self.current_user_email = email
+                        self.go_to_main_page()
 
         self.maximize_restore()
 
@@ -172,6 +188,13 @@ class MinigramWidget(QWidget, Ui_MainWindow):
             self.login_error_label.setText('Неверный логин или пароль')
             return
 
+        with open(self.login_data_filepath, 'w') as login_data_file:
+            if self.remember_me_checkbox.isChecked():
+                login_data_file.write(email + '\n' + found_password)
+
+        self.clear_text_from_widgets(
+            (self.email_edit, self.password_edit, self.login_error_label)
+        )
         self.current_user_email = email
         self.go_to_main_page()
 

@@ -4,3 +4,4 @@ tests
 __pycache__
 static/__pycache__
 main_db.sqlite
+login_data.txt
