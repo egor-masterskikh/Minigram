@@ -80,11 +80,13 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         self.register_password_edit.textChanged.connect(self.check_passwords_correctness)
         self.repeat_password_edit.textChanged.connect(self.check_passwords_correctness)
 
-        self.users_list.itemSelectionChanged.connect(self.show_chat)
+        self.users_list.itemSelectionChanged.connect(self.display_chat)
         self.message_edit.textChanged.connect(self.set_send_message_btn_visible)
 
         self.send_message_btn.clicked.connect(self.send_message)
         self.message_edit.keyPressEvent = self.message_edit_key_press_event
+
+        self.search.textChanged.connect(self.search_users)
 
         self.setStyleSheet('* {font-family: "%s";}\n' % self.font().family() + stylesheet)
 
@@ -158,7 +160,7 @@ class MinigramWidget(QWidget, Ui_MainWindow):
 
     def go_to_main_page(self):
         self.stacked_widget.setCurrentWidget(self.main_widget)
-        self.show_users()
+        self.display_chatted_users()
 
     def set_font(self, family_name):
         font_db = QFontDatabase()
@@ -327,11 +329,27 @@ class MinigramWidget(QWidget, Ui_MainWindow):
             self.passwords_match_validator.setChecked(True)
             return True
 
-    def show_users(self):
-        if not self.current_user_email:
-            self.go_to_login_page()
+    def display_users(self, nicks: list, selected_nick=None):
+        self.users_list.clear()
+        self.dialog_window.clear()
+        self.message_widget.setVisible(False)
+        self.user_info_widget.setVisible(False)
+        if selected_nick:
+            for nick in nicks:
+                chat_item = QListWidgetItem(nick)
+                chat_item.setTextAlignment(Qt.AlignCenter)
+                self.users_list.addItem(chat_item)
+                if nick == selected_nick:
+                    self.users_list.setCurrentItem(chat_item)
+                    self.display_chat()
+        else:
+            for nick in nicks:
+                chat_item = QListWidgetItem(nick)
+                chat_item.setTextAlignment(Qt.AlignCenter)
+                self.users_list.addItem(chat_item)
 
-        chats = self.db_cursor.execute(
+    def display_chatted_users(self, selected_nick=None):
+        nicks = [nick for nick, in self.db_cursor.execute(
             """
             select nick from users
             where id in (
@@ -348,24 +366,34 @@ class MinigramWidget(QWidget, Ui_MainWindow):
                 )
             ) order by nick
             """, (self.current_user_email, self.current_user_email)
-        ).fetchall()
+        ).fetchall()]
 
-        self.users_list.clear()
-        self.message_widget.setVisible(False)
-        self.user_info_widget.setVisible(False)
-        for nick, in chats:
-            chat_item = QListWidgetItem(nick)
-            chat_item.setTextAlignment(Qt.AlignCenter)
-            self.users_list.addItem(chat_item)
+        if selected_nick and selected_nick not in nicks:
+            nicks.append(selected_nick)
+            nicks.sort()
 
-    def show_chat(self):
-        item = self.users_list.currentItem()
+        self.display_users(nicks, selected_nick)
+
+    def display_chat(self, with_users_update=False):
+        selected_user = self.users_list.currentItem()
+        if not selected_user:
+            if with_users_update:
+                self.display_chatted_users()
+            return
+
+        selected_nick = selected_user.text()
+        if with_users_update:
+            self.users_list.itemSelectionChanged.disconnect()
+            self.display_chatted_users(selected_nick)
+            self.search.clear()
+            self.users_list.itemSelectionChanged.connect(self.display_chat)
+
         self.message_edit.clear()
         self.dialog_window.clear()
         self.message_widget.setVisible(True)
         self.user_info_widget.setVisible(True)
-        self.send_message_btn.setVisible(False)
-        self.nick.setText(item.text())
+        self.set_send_message_btn_visible()
+        self.nick.setText(selected_nick)
         self.message_edit.setFocus()
 
         sent_messages = self.db_cursor.execute(
@@ -378,7 +406,7 @@ class MinigramWidget(QWidget, Ui_MainWindow):
                 select id from users
                 where nick = ?
             )
-            """, (self.current_user_email, item.text())
+            """, (self.current_user_email, selected_nick)
         ).fetchall()
         received_messages = self.db_cursor.execute(
             """
@@ -390,7 +418,7 @@ class MinigramWidget(QWidget, Ui_MainWindow):
                 select id from users
                 where nick = ?
             )
-            """, (self.current_user_email, item.text())
+            """, (self.current_user_email, selected_nick)
         ).fetchall()
 
         def get_local_datetime(datetime_str):
@@ -479,6 +507,37 @@ class MinigramWidget(QWidget, Ui_MainWindow):
                 self.send_message()
                 return
         QPlainTextEdit.keyPressEvent(self.message_edit, event)
+
+    def search_users(self):
+        entered_nick = self.search.text().strip()
+        selected_user = self.users_list.currentItem()
+        if selected_user:
+            selected_nick = selected_user.text()
+        else:
+            selected_nick = None
+
+        if not entered_nick:
+            self.display_chatted_users(selected_nick=selected_nick)
+        else:
+            found_nicks = [nick for nick, in self.db_cursor.execute(
+                """
+                select nick from users
+                where nick like ? and nick != (
+                    select nick from users
+                    where email = ?
+                ) order by nick
+                """, (f'%{entered_nick}%', self.current_user_email)
+            ).fetchall()]
+
+            self.users_list.itemSelectionChanged.disconnect()
+
+            self.display_users(found_nicks, selected_nick=selected_nick)
+
+            self.users_list.itemSelectionChanged.connect(
+                lambda: self.display_chat(with_users_update=True)
+            )
+
+            self.search.setFocus()
 
 
 if __name__ == '__main__':
