@@ -13,6 +13,8 @@ import hashlib
 import os
 import binascii
 from datetime import datetime, timezone
+from zipfile import ZipFile
+from PyQt5.QtCore import QByteArray
 
 
 class MainError(Exception):
@@ -164,9 +166,14 @@ class MinigramWidget(QWidget, Ui_MainWindow):
 
     def set_font(self, family_name):
         font_db = QFontDatabase()
-        font_db.addApplicationFont(
-            f'https://fonts.googleapis.com/css2?family={family_name}&display=swap'
-        )
+        font_db.removeAllApplicationFonts()
+        font_archive = ZipFile(f'static/fonts/{family_name}.zip')
+        for font_name in font_archive.namelist():
+            with font_archive.open(font_name) as font_file:
+                font_data = font_file.read()
+                font_data_as_bytearray = QByteArray(font_data)
+                font_db.addApplicationFontFromData(font_data_as_bytearray)
+        family_name = family_name.replace('_', ' ')
         self.setFont(QFont(family_name, 12))
 
     def login(self):
