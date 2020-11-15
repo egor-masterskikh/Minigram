@@ -6,7 +6,7 @@ from static.stylesheet import stylesheet
 from QSmoothlyHoveredPushButton import QSmoothlyHoveredPushButton
 from MyFavouriteColors import COLORS
 from ui_main import Ui_MainWindow
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QByteArray, QTimer
 import sqlite3
 from string import ascii_letters, digits
 import hashlib
@@ -14,7 +14,6 @@ import os
 import binascii
 from datetime import datetime, timezone
 from zipfile import ZipFile
-from PyQt5.QtCore import QByteArray
 
 
 class MainError(Exception):
@@ -37,6 +36,9 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         self.sizegrip = QSizeGrip(self.grip_frame)
         self.db = sqlite3.connect('main_db.sqlite')
         self.db_cursor = self.db.cursor()
+        # TODO: При изменении структуры БД выполнить код:
+        # with open('db_creation.sql') as db_creation_file:
+        #     self.db_cursor.executescript(db_creation_file.read())
 
         self.maximize_btn.clicked.connect(self.maximize_restore)
         self.minimize_btn.clicked.connect(self.showMinimized)
@@ -89,6 +91,10 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         self.message_edit.keyPressEvent = self.message_edit_key_press_event
 
         self.search.textChanged.connect(self.search_users)
+
+        self.chat_timer = QTimer(self)
+        self.chat_timer.setInterval(1000)
+        self.chat_timer.timeout.connect(lambda: self.display_chat(from_timer=True))
 
         self.setStyleSheet('* {font-family: "%s";}\n' % self.font().family() + stylesheet)
 
@@ -163,6 +169,7 @@ class MinigramWidget(QWidget, Ui_MainWindow):
     def go_to_main_page(self):
         self.stacked_widget.setCurrentWidget(self.main_widget)
         self.display_chatted_users()
+        self.chat_timer.start()
 
     def set_font(self, family_name):
         font_db = QFontDatabase()
@@ -381,7 +388,7 @@ class MinigramWidget(QWidget, Ui_MainWindow):
 
         self.display_users(nicks, selected_nick)
 
-    def display_chat(self, with_users_update=False):
+    def display_chat(self, with_users_update=False, from_timer=False):
         selected_user = self.users_list.currentItem()
         if not selected_user:
             if with_users_update:
@@ -395,13 +402,16 @@ class MinigramWidget(QWidget, Ui_MainWindow):
             self.search.clear()
             self.users_list.itemSelectionChanged.connect(self.display_chat)
 
-        self.message_edit.clear()
+        if not from_timer:
+            self.message_edit.clear()
+
         self.dialog_window.clear()
         self.message_widget.setVisible(True)
         self.user_info_widget.setVisible(True)
         self.set_send_message_btn_visible()
         self.nick.setText(selected_nick)
-        self.message_edit.setFocus()
+        if not self.search.hasFocus():
+            self.message_edit.setFocus()
 
         sent_messages = self.db_cursor.execute(
             """
@@ -450,8 +460,6 @@ class MinigramWidget(QWidget, Ui_MainWindow):
 
             message_body_label = QLabel(body)
             message_body_label.setWordWrap(True)
-            message_body_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
-            message_body_label.setCursor(Qt.IBeamCursor)
 
             message_timestamp_label = QLabel(timestamp.strftime('%H:%M'))
             message_timestamp_label.setStyleSheet(f'color: {COLORS["Асфальт"]}; margin-top: 10px;')
@@ -505,8 +513,7 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         )
         self.db.commit()
 
-        self.message_edit.clear()
-        # self.show_chat()
+        self.display_chat()
 
     def message_edit_key_press_event(self, event):
         if int(event.modifiers()) == Qt.ControlModifier:

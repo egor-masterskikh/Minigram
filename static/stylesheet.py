@@ -18,9 +18,12 @@ stylesheet = """
     color: %s;
 }
 
-#login_widget QLineEdit, #register_widget QLineEdit {
+QLineEdit, QPlainTextEdit {
     selection-background-color: %s;
     selection-color: white;
+}
+
+#login_widget QLineEdit, #register_widget QLineEdit {
     border-width: 2px;
     border-style: solid;
     border-top: 0;
@@ -134,11 +137,6 @@ QScrollBar::handle:vertical {
     background-color: transparent;
 }
 
-#dialog_window::item QLabel {
-    selection-background-color: %s;
-    selection-color: white;
-}
-
 #remember_me_checkbox::indicator {
     width: 20px;
     height: 20px;
@@ -154,4 +152,4 @@ QScrollBar::handle:vertical {
 """ % (COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'],
        COLORS['Кобальт синий'], COLORS['Текст на песочном'], COLORS['Карминово-красный'],
        COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Сбербанк'], COLORS['Нейтральный серый'],
-       COLORS['Сбербанк'], COLORS['Нейтральный серый'], COLORS['Асфальт'], COLORS['Сбербанк'])
+       COLORS['Сбербанк'], COLORS['Нейтральный серый'], COLORS['Асфальт'])

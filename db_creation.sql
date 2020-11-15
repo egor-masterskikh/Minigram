@@ -1,26 +1,16 @@
---
--- Файл сгенерирован с помощью SQLiteStudio v3.2.1 в Пт окт 30 09:34:53 2020
---
--- Использованная кодировка текста: UTF-8
---
-PRAGMA foreign_keys = off;
-BEGIN TRANSACTION;
-
--- Таблица: messages
+DROP TABLE IF EXISTS messages;
 CREATE TABLE messages (
     id           INTEGER  PRIMARY KEY ON CONFLICT FAIL AUTOINCREMENT
                           UNIQUE ON CONFLICT FAIL
                           NOT NULL ON CONFLICT FAIL,
     body         TEXT     NOT NULL ON CONFLICT FAIL,
-    sender_id    INTEGER  REFERENCES users (id) ON DELETE SET NULL
-                          UNIQUE ON CONFLICT FAIL,
-    recipient_id INTEGER  REFERENCES users (id) ON DELETE SET NULL
-                          UNIQUE ON CONFLICT FAIL,
-    timestamp    DATETIME NOT NULL
+    sender_id    INTEGER  REFERENCES users (id) ON DELETE SET NULL,
+    recipient_id INTEGER  REFERENCES users (id) ON DELETE SET NULL,
+    timestamp    DATETIME NOT NULL ON CONFLICT FAIL
+                          DEFAULT (CURRENT_TIMESTAMP) 
 );
 
-
--- Таблица: users
+DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     id       INTEGER      PRIMARY KEY ON CONFLICT FAIL AUTOINCREMENT
                           UNIQUE ON CONFLICT FAIL
@@ -31,7 +21,3 @@ CREATE TABLE users (
                           NOT NULL ON CONFLICT FAIL,
     password TEXT         NOT NULL ON CONFLICT FAIL
 );
-
-
-COMMIT TRANSACTION;
-PRAGMA foreign_keys = on;
