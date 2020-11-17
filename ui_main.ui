@@ -350,7 +350,7 @@ background-color: #62c554;</string>
            <item row="0" column="0">
             <widget class="QStackedWidget" name="stacked_widget">
              <property name="currentIndex">
-              <number>0</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="login_widget">
               <layout class="QGridLayout" name="login_layout">
@@ -399,6 +399,11 @@ background-color: #62c554;</string>
                  </item>
                  <item row="1" column="0">
                   <widget class="QLineEdit" name="email_edit">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
                    <property name="maxLength">
                     <number>100</number>
                    </property>
@@ -421,6 +426,7 @@ background-color: #62c554;</string>
                    <property name="font">
                     <font>
                      <family>Segoe UI</family>
+                     <pointsize>12</pointsize>
                     </font>
                    </property>
                    <property name="cursor">
@@ -479,6 +485,11 @@ background-color: #62c554;</string>
                  </item>
                  <item row="3" column="0">
                   <widget class="QLineEdit" name="password_edit">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
                    <property name="inputMask">
                     <string extracomment="0"/>
                    </property>
@@ -598,6 +609,11 @@ background-color: #62c554;</string>
                  </property>
                  <item row="9" column="0">
                   <widget class="QLineEdit" name="register_password_edit">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
                    <property name="echoMode">
                     <enum>QLineEdit::Password</enum>
                    </property>
@@ -641,6 +657,11 @@ background-color: #62c554;</string>
                  </item>
                  <item row="11" column="0">
                   <widget class="QLineEdit" name="repeat_password_edit">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
                    <property name="echoMode">
                     <enum>QLineEdit::Password</enum>
                    </property>
@@ -679,7 +700,13 @@ background-color: #62c554;</string>
                   </widget>
                  </item>
                  <item row="2" column="0">
-                  <widget class="QLineEdit" name="register_email_edit"/>
+                  <widget class="QLineEdit" name="register_email_edit">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                  </widget>
                  </item>
                  <item row="3" column="0">
                   <widget class="QLabel" name="register_email_error_label">
@@ -754,7 +781,13 @@ background-color: #62c554;</string>
                   </widget>
                  </item>
                  <item row="5" column="0">
-                  <widget class="QLineEdit" name="register_nick_edit"/>
+                  <widget class="QLineEdit" name="register_nick_edit">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                  </widget>
                  </item>
                  <item row="8" column="0">
                   <widget class="QLabel" name="register_password_label">
@@ -873,12 +906,23 @@ background-color: #62c554;</string>
                        </property>
                        <property name="icon">
                         <iconset>
-                         <normaloff>static/menu.svg</normaloff>static/menu.svg</iconset>
+                         <normaloff>static/settings.svg</normaloff>static/settings.svg</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>25</width>
+                         <height>25</height>
+                        </size>
                        </property>
                       </widget>
                      </item>
                      <item row="0" column="1">
                       <widget class="QLineEdit" name="search">
+                       <property name="font">
+                        <font>
+                         <pointsize>12</pointsize>
+                        </font>
+                       </property>
                        <property name="placeholderText">
                         <string>Поиск</string>
                        </property>
@@ -1061,6 +1105,11 @@ background-color: #62c554;</string>
                               </property>
                               <item>
                                <widget class="QPlainTextEdit" name="message_edit">
+                                <property name="font">
+                                 <font>
+                                  <pointsize>12</pointsize>
+                                 </font>
+                                </property>
                                 <property name="horizontalScrollBarPolicy">
                                  <enum>Qt::ScrollBarAlwaysOff</enum>
                                 </property>

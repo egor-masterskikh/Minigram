@@ -1,6 +1,6 @@
 from sys import exit, argv
-from PyQt5.QtWidgets import QApplication, QWidget, QSizeGrip, QListWidgetItem, QLabel, \
-    QHBoxLayout, QSizePolicy, QPlainTextEdit
+from PyQt5.QtWidgets import (QApplication, QWidget, QSizeGrip, QListWidgetItem, QLabel,
+                             QHBoxLayout, QSizePolicy, QPlainTextEdit)
 from PyQt5.QtGui import QIcon, QFontDatabase, QFont, QColor
 from static.stylesheet import stylesheet
 from QSmoothlyHoveredPushButton import QSmoothlyHoveredPushButton
@@ -24,58 +24,35 @@ class MinigramWidget(QWidget, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.set_font('Ubuntu')
 
+        # ----- Менеджер окна ----- #
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
-
-        self.current_user_email = None
         self.dragPos = None
         self.maximize_btn_side = 10
         self.GLOBAL_STATE = 0
         self.sizegrip = QSizeGrip(self.grip_frame)
-        self.db = sqlite3.connect('main_db.sqlite')
-        self.db_cursor = self.db.cursor()
-        # TODO: При изменении структуры БД выполнить код:
-        # with open('db_creation.sql') as db_creation_file:
-        #     self.db_cursor.executescript(db_creation_file.read())
-
         self.maximize_btn.clicked.connect(self.maximize_restore)
         self.minimize_btn.clicked.connect(self.showMinimized)
         self.close_btn.clicked.connect(self.close)
         self.window_btns.enterEvent = self.show_btn_icons
         self.window_btns.leaveEvent = self.hide_btn_icons
         self.title_bar.mouseMoveEvent = self.moveWindow
+        # /----- Менеджер окна ----- #
 
-        self.dialog_window_and_message_edit_splitter.setSizes([1_000_000, 0])
-        # 1000000 - рандомное большое число, чтобы максимально прижать строку ввода к низу
+        # ----- База данных ----- #
+        self.db = sqlite3.connect('main_db.sqlite')
+        self.db_cursor = self.db.cursor()
+        # /----- База данных ----- #
 
-        self.login_btn = QSmoothlyHoveredPushButton(
-            'Войти',
-            self,
-            background_color=QColor('white'),
-            foreground_color=QColor(COLORS['Сбербанк']),
-            duration=300
-        )
-        self.login_btn.setStyleSheet('padding: 15px auto; margin-bottom: 30px; margin-top: 30px;')
-        self.login_btn.clicked.connect(self.login)
-        self.login_grid.addWidget(self.login_btn, 6, 0)
+        # ----- Обработчики ----- #
+        self.to_register_page_link.clicked.connect(self.go_to_register_page)
+        self.to_login_page_arrow.clicked.connect(self.go_to_login_page)
+        self.send_message_btn.clicked.connect(self.send_message)
 
-        self.email_edit.returnPressed.connect(self.login)
         self.email_edit.setFocus()
+        self.email_edit.returnPressed.connect(self.login)
         self.password_edit.returnPressed.connect(self.login)
-
-        self.register_btn = QSmoothlyHoveredPushButton(
-            'Зарегистрироваться',
-            self,
-            background_color=QColor('white'),
-            foreground_color=QColor(COLORS['Сбербанк']),
-            duration=300
-        )
-        self.register_btn.setStyleSheet('padding: 15px auto; margin-top: 30px;')
-        self.register_btn.clicked.connect(self.register)
-        self.register_grid.addWidget(self.register_btn, 15, 0)
-
         self.register_email_edit.returnPressed.connect(self.register)
         self.register_nick_edit.returnPressed.connect(self.register)
         self.register_password_edit.returnPressed.connect(self.register)
@@ -83,46 +60,48 @@ class MinigramWidget(QWidget, Ui_MainWindow):
 
         self.register_password_edit.textChanged.connect(self.check_passwords_correctness)
         self.repeat_password_edit.textChanged.connect(self.check_passwords_correctness)
-
-        self.users_list.itemSelectionChanged.connect(self.display_chat)
+        self.search.textChanged.connect(self.search_users)
         self.message_edit.textChanged.connect(self.set_send_message_btn_visible)
 
-        self.send_message_btn.clicked.connect(self.send_message)
+        self.users_list.itemSelectionChanged.connect(self.display_chat)
         self.message_edit.keyPressEvent = self.message_edit_key_press_event
+        # /----- Обработчики ----- #
 
-        self.search.textChanged.connect(self.search_users)
+        # ----- Стили ----- #
+        self.set_font('Ubuntu')
+        self.setStyleSheet('* {font-family: "%s";}\n' % self.font().family() + stylesheet)
+        # /----- Стили ----- #
+
+        # ----- Кнопки входа и регистрации ----- #
+        self.login_btn = QSmoothlyHoveredPushButton('Войти', self,
+                                                    QColor(COLORS['Сбербанк']),
+                                                    QColor('white'), 300)
+        self.login_btn.setStyleSheet('padding: 15px auto; margin-bottom: 30px; margin-top: 30px;')
+        self.login_btn.clicked.connect(self.login)
+        self.login_grid.addWidget(self.login_btn, 6, 0)
+
+        self.register_btn = QSmoothlyHoveredPushButton('Зарегистрироваться', self,
+                                                       QColor(COLORS['Сбербанк']),
+                                                       QColor('white'), 300)
+        self.register_btn.setStyleSheet('padding: 15px auto; margin-top: 30px;')
+        self.register_btn.clicked.connect(self.register)
+        self.register_grid.addWidget(self.register_btn, 15, 0)
+        # /----- Кнопки входа и регистрации ----- #
+
+        self.remember_me_file_path = 'login_data.txt'
+        self.current_user_id = None
+        # Прижимаю строку ввода к низу
+        self.dialog_window_and_message_edit_splitter.setSizes([1_000_000, 0])
 
         self.chat_timer = QTimer(self)
         self.chat_timer.setInterval(1000)
         self.chat_timer.timeout.connect(lambda: self.display_chat(from_timer=True))
+        self.chat_timer.start()
 
-        self.setStyleSheet('* {font-family: "%s";}\n' % self.font().family() + stylesheet)
-
-        self.to_register_page_link.clicked.connect(self.go_to_register_page)
-        self.to_login_page_arrow.clicked.connect(self.go_to_login_page)
-
-        self.login_data_filepath = 'login_data.txt'
-        if os.path.exists(self.login_data_filepath):
-            with open(self.login_data_filepath) as login_data_file:
-                login_data = login_data_file.read().strip().splitlines()
-                if len(login_data) == 2:
-                    email, password_hash = login_data
-                    user_id = self.db_cursor.execute(
-                        """
-                        select id from users
-                        where email = ? and password = ?
-                        """, (email, password_hash)
-                    ).fetchone()
-                    if user_id:
-                        self.current_user_email = email
-                        self.go_to_main_page()
-
+        self.login(from_remember_me_file=True)
         self.maximize_restore()
 
-    def set_send_message_btn_visible(self):
-        text = self.message_edit.toPlainText().strip()
-        self.send_message_btn.setVisible(bool(text))
-
+    # ----- Методы менеджера окна ----- #
     def moveWindow(self, event):
         if self.GLOBAL_STATE:
             self.maximize_restore()
@@ -157,6 +136,7 @@ class MinigramWidget(QWidget, Ui_MainWindow):
             self.maximize_btn_side = 10
             self.showNormal()
             self.hide_btn_icons()
+    # /----- Методы менеджера окна ----- #
 
     def go_to_register_page(self):
         self.stacked_widget.setCurrentWidget(self.register_widget)
@@ -169,7 +149,6 @@ class MinigramWidget(QWidget, Ui_MainWindow):
     def go_to_main_page(self):
         self.stacked_widget.setCurrentWidget(self.main_widget)
         self.display_chatted_users()
-        self.chat_timer.start()
 
     def set_font(self, family_name):
         font_db = QFontDatabase()
@@ -183,90 +162,26 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         family_name = family_name.replace('_', ' ')
         self.setFont(QFont(family_name, 12))
 
-    def login(self):
-        self.login_error_label.clear()
-        email = self.email_edit.text().strip()
+    @staticmethod
+    def clear_text_from_widgets(*widgets):
+        for widget in widgets:
+            widget.clear()
 
+    def can_login(self, email, password):
         found_password_tp = self.db_cursor.execute(
             """
             select password from users
             where email = ?
             """, (email,)
         ).fetchone()
+
         if not found_password_tp:
-            self.login_error_label.setText('Неверный логин или пароль')
-            return
-
-        entered_password = self.password_edit.text().strip()
-        found_password = found_password_tp[0]
-
-        if not self.verify_password(found_password, entered_password):
-            self.login_error_label.setText('Неверный логин или пароль')
-            return
-
-        with open(self.login_data_filepath, 'w') as login_data_file:
-            if self.remember_me_checkbox.isChecked():
-                login_data_file.write(email + '\n' + found_password)
-
-        self.clear_text_from_widgets(
-            (self.email_edit, self.password_edit, self.login_error_label)
-        )
-        self.current_user_email = email
-        self.go_to_main_page()
-
-    def register(self):
-        self.register_email_error_label.clear()
-        self.register_nick_error_label.clear()
-        all_valid = True
-
-        email = self.register_email_edit.text().strip()
-        try:
-            self.check_email_correctness(email)
-        except MainError as error:
-            all_valid = False
-            self.register_email_error_label.setText(str(error))
-
-        nick = self.register_nick_edit.text().strip()
-        try:
-            self.check_nick_correctness(nick)
-        except MainError as error:
-            all_valid = False
-            self.register_nick_error_label.setText(str(error))
-
-        if not self.check_passwords_correctness():
-            all_valid = False
-
-        if all_valid:
-            password = self.register_password_edit.text().strip()
-            password_hash = self.hash_password(password)
-            self.db_cursor.execute(
-                """
-                insert into users(nick, email, password) values(?, ?, ?)
-                """, (nick, email, password_hash)
-            )
-            self.db.commit()
-            self.clear_text_from_widgets(
-                (self.register_nick_error_label, self.register_nick_edit, self.register_email_edit,
-                 self.register_email_error_label, self.register_password_edit,
-                 self.repeat_password_edit)
-            )
-
-            self.current_user_email = email
-            self.go_to_main_page()
-
-    @staticmethod
-    def clear_text_from_widgets(widgets):
-        for widget in widgets:
-            widget.clear()
-
-    @staticmethod
-    def hash_password(password):
-        salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
-        password_hash = hashlib.pbkdf2_hmac(
-            'sha512', password.encode('utf-8'), salt, 100000
-        )
-        password_hash = binascii.hexlify(password_hash)
-        return (salt + password_hash).decode('ascii')
+            return False
+        else:
+            found_password, = found_password_tp
+            if not self.verify_password(found_password, password):
+                return False
+            return True
 
     @staticmethod
     def verify_password(stored_password_hash, provided_password):
@@ -277,6 +192,44 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         )
         password_hash = binascii.hexlify(password_hash).decode('ascii')
         return password_hash == stored_password
+
+    def login(self, from_remember_me_file=False):
+        if from_remember_me_file:
+            if os.path.exists(self.remember_me_file_path):
+                with open(self.remember_me_file_path) as remember_me_file:
+                    login_data = remember_me_file.read().strip().splitlines()
+                    if len(login_data) == 2:
+                        email, password = login_data
+                        if self.can_login(email, password):
+                            self.current_user_id = self.get_user_id_by_email(email)
+                            self.go_to_main_page()
+
+        else:
+            self.login_error_label.clear()
+            email = self.email_edit.text().strip()
+            password = self.password_edit.text().strip()
+
+            if not self.can_login(email, password):
+                self.login_error_label.setText('Неверный email или пароль')
+            else:
+                with open(self.remember_me_file_path, 'w') as remember_me_file:
+                    if self.remember_me_checkbox.isChecked():
+                        remember_me_file.write(email + '\n' + password)
+
+                self.clear_text_from_widgets(
+                    self.email_edit, self.password_edit, self.login_error_label
+                )
+                self.current_user_id = self.get_user_id_by_email(email)
+                self.go_to_main_page()
+
+    @staticmethod
+    def hash_password(password):
+        salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
+        password_hash = hashlib.pbkdf2_hmac(
+            'sha512', password.encode('utf-8'), salt, 100000
+        )
+        password_hash = binascii.hexlify(password_hash)
+        return (salt + password_hash).decode('ascii')
 
     def check_email_correctness(self, email):
         if not email:
@@ -343,6 +296,57 @@ class MinigramWidget(QWidget, Ui_MainWindow):
             self.passwords_match_validator.setChecked(True)
             return True
 
+    def register(self):
+        self.register_email_error_label.clear()
+        self.register_nick_error_label.clear()
+        all_valid = True
+
+        email = self.register_email_edit.text().strip()
+        try:
+            self.check_email_correctness(email)
+        except MainError as error:
+            all_valid = False
+            self.register_email_error_label.setText(str(error))
+
+        nick = self.register_nick_edit.text().strip()
+        try:
+            self.check_nick_correctness(nick)
+        except MainError as error:
+            all_valid = False
+            self.register_nick_error_label.setText(str(error))
+
+        if not self.check_passwords_correctness():
+            all_valid = False
+
+        if all_valid:
+            password = self.register_password_edit.text().strip()
+            password_hash = self.hash_password(password)
+            self.db_cursor.execute(
+                """
+                insert into users(nick, email, password) values(?, ?, ?)
+                """, (nick, email, password_hash)
+            )
+            self.db.commit()
+            self.clear_text_from_widgets(
+                self.register_nick_error_label, self.register_nick_edit, self.register_email_edit,
+                self.register_email_error_label, self.register_password_edit,
+                self.repeat_password_edit
+            )
+            self.current_user_id = self.get_user_id_by_email(email)
+            self.go_to_main_page()
+
+    def get_user_id_by_email(self, email):
+        user_id_tp = self.db_cursor.execute(
+            """
+            select id from users
+            where email = ?
+            """, (email,)
+        ).fetchone()
+        if not user_id_tp:
+            return
+        else:
+            return user_id_tp[0]
+
     def display_users(self, nicks: list, selected_nick=None):
         self.users_list.clear()
         self.dialog_window.clear()
@@ -368,18 +372,12 @@ class MinigramWidget(QWidget, Ui_MainWindow):
             select nick from users
             where id in (
                 select recipient_id from messages
-                where sender_id in (
-                    select id from users
-                    where email = ?
-                )
+                where sender_id = ?
             ) or id in (
                 select sender_id from messages
-                where recipient_id in (
-                    select id from users
-                    where email = ?
-                )
+                where recipient_id = ?
             ) order by nick
-            """, (self.current_user_email, self.current_user_email)
+            """, (self.current_user_id, self.current_user_id)
         ).fetchall()]
 
         if selected_nick and selected_nick not in nicks:
@@ -416,26 +414,20 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         sent_messages = self.db_cursor.execute(
             """
             select body, timestamp from messages
-            where sender_id = (
-                select id from users
-                where email = ?
-            ) and recipient_id = (
+            where sender_id = ? and recipient_id = (
                 select id from users
                 where nick = ?
             )
-            """, (self.current_user_email, selected_nick)
+            """, (self.current_user_id, selected_nick)
         ).fetchall()
         received_messages = self.db_cursor.execute(
             """
             select body, timestamp from messages
-            where recipient_id = (
-                select id from users
-                where email = ?
-            ) and sender_id = (
+            where recipient_id = ? and sender_id = (
                 select id from users
                 where nick = ?
             )
-            """, (self.current_user_email, selected_nick)
+            """, (self.current_user_id, selected_nick)
         ).fetchall()
 
         def get_local_datetime(datetime_str):
@@ -499,21 +491,19 @@ class MinigramWidget(QWidget, Ui_MainWindow):
             where nick = ?
             """, (self.nick.text(),)
         ).fetchone()
-        sender_id, = self.db_cursor.execute(
-            """
-            select id from users
-            where email = ?
-            """, (self.current_user_email,)
-        ).fetchone()
 
         self.db_cursor.execute(
             """
             insert into messages(body, recipient_id, sender_id) values(?, ?, ?)
-            """, (body, recipient_id, sender_id)
+            """, (body, recipient_id, self.current_user_id)
         )
         self.db.commit()
 
         self.display_chat()
+
+    def set_send_message_btn_visible(self):
+        text = self.message_edit.toPlainText().strip()
+        self.send_message_btn.setVisible(bool(text))
 
     def message_edit_key_press_event(self, event):
         if int(event.modifiers()) == Qt.ControlModifier:
@@ -538,9 +528,9 @@ class MinigramWidget(QWidget, Ui_MainWindow):
                 select nick from users
                 where nick like ? and nick != (
                     select nick from users
-                    where email = ?
+                    where id = ?
                 ) order by nick
-                """, (f'%{entered_nick}%', self.current_user_email)
+                """, (f'%{entered_nick}%', self.current_user_id)
             ).fetchall()]
 
             self.users_list.itemSelectionChanged.disconnect()
