@@ -2,9 +2,8 @@ from sys import exit, argv
 from PyQt5.QtWidgets import (QApplication, QWidget, QSizeGrip, QListWidgetItem, QLabel,
                              QHBoxLayout, QSizePolicy, QPlainTextEdit)
 from PyQt5.QtGui import QIcon, QFontDatabase, QFont, QColor
-from static.stylesheet import stylesheet
 from QSmoothlyHoveredPushButton import QSmoothlyHoveredPushButton
-from MyFavouriteColors import COLORS
+from colors import COLORS
 from ui_main import Ui_MainWindow
 from PyQt5.QtCore import Qt, QSize, QByteArray, QTimer
 import sqlite3
@@ -49,6 +48,15 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         self.to_register_page_link.clicked.connect(self.go_to_register_page)
         self.to_login_page_arrow.clicked.connect(self.go_to_login_page)
         self.send_message_btn.clicked.connect(self.send_message)
+        self.to_settings_page_btn.clicked.connect(self.go_to_settings_page)
+        for btn in (
+                self.from_settings_page_to_main_page_btn_1,
+                self.from_settings_page_to_main_page_btn_2,
+                self.from_settings_page_to_main_page_btn_3,
+                self.from_settings_page_to_main_page_btn_4
+        ):
+            btn.clicked.connect(self.go_to_main_page)
+        self.logout_btn.clicked.connect(self.logout)
 
         self.email_edit.setFocus()
         self.email_edit.returnPressed.connect(self.login)
@@ -69,7 +77,10 @@ class MinigramWidget(QWidget, Ui_MainWindow):
 
         # ----- Стили ----- #
         self.set_font('Ubuntu')
-        self.setStyleSheet('* {font-family: "%s";}\n' % self.font().family() + stylesheet)
+        with open('static/stylesheet.txt') as stylesheet_file:
+            stylesheet = stylesheet_file.read()
+            font_stylesheet = '* {font-family: "%s";}\n' % self.font().family()
+            self.setStyleSheet(font_stylesheet + stylesheet)
         # /----- Стили ----- #
 
         # ----- Кнопки входа и регистрации ----- #
@@ -148,7 +159,17 @@ class MinigramWidget(QWidget, Ui_MainWindow):
 
     def go_to_main_page(self):
         self.stacked_widget.setCurrentWidget(self.main_widget)
-        self.display_chatted_users()
+        self.search_users()
+
+    def go_to_settings_page(self):
+        self.settings_widget_current_user_nick_label.setText(
+            self.get_user_nick_by_id(self.current_user_id)
+        )
+        self.stacked_widget.setCurrentWidget(self.settings_widget)
+
+    def logout(self):
+        self.current_user_id = None
+        self.go_to_login_page()
 
     def set_font(self, family_name):
         font_db = QFontDatabase()
@@ -199,10 +220,18 @@ class MinigramWidget(QWidget, Ui_MainWindow):
                 with open(self.remember_me_file_path) as remember_me_file:
                     login_data = remember_me_file.read().strip().splitlines()
                     if len(login_data) == 2:
-                        email, password = login_data
-                        if self.can_login(email, password):
-                            self.current_user_id = self.get_user_id_by_email(email)
+                        email, password_hash = login_data
+                        user_id = self.db_cursor.execute(
+                            """
+                            select id from users
+                            where email = ? and password = ?
+                            """, (email, password_hash)
+                        ).fetchone()
+                        if user_id:
+                            self.current_user_id = user_id[0]
                             self.go_to_main_page()
+                        else:
+                            self.go_to_login_page()
 
         else:
             self.login_error_label.clear()
@@ -214,7 +243,13 @@ class MinigramWidget(QWidget, Ui_MainWindow):
             else:
                 with open(self.remember_me_file_path, 'w') as remember_me_file:
                     if self.remember_me_checkbox.isChecked():
-                        remember_me_file.write(email + '\n' + password)
+                        password_hash = self.db_cursor.execute(
+                            """
+                            select password from users
+                            where email = ?
+                            """, (email,)
+                        ).fetchone()[0]
+                        remember_me_file.write(email + '\n' + password_hash)
 
                 self.clear_text_from_widgets(
                     self.email_edit, self.password_edit, self.login_error_label
@@ -347,6 +382,18 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         else:
             return user_id_tp[0]
 
+    def get_user_nick_by_id(self, user_id):
+        nick_tp = self.db_cursor.execute(
+            """
+            select nick from users
+            where id = ?
+            """, (user_id,)
+        ).fetchone()
+        if not nick_tp:
+            return
+        else:
+            return nick_tp[0]
+
     def display_users(self, nicks: list, selected_nick=None):
         self.users_list.clear()
         self.dialog_window.clear()
@@ -387,6 +434,9 @@ class MinigramWidget(QWidget, Ui_MainWindow):
         self.display_users(nicks, selected_nick)
 
     def display_chat(self, with_users_update=False, from_timer=False):
+        if self.stacked_widget.currentWidget() != self.main_widget:
+            return
+
         selected_user = self.users_list.currentItem()
         if not selected_user:
             if with_users_update:
@@ -466,7 +516,7 @@ class MinigramWidget(QWidget, Ui_MainWindow):
                 message_row_widget_hbox.addWidget(margin)
                 message_row_widget_hbox.addWidget(message_widget)
                 message_widget.setStyleSheet(
-                    message_widget.styleSheet() + f'background-color: {COLORS["Бело-зелёный"]}'
+                    message_widget.styleSheet() + f'background-color: {COLORS["БелоЗелёный"]}'
                 )
             else:
                 message_row_widget_hbox.addWidget(message_widget)

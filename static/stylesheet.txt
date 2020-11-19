@@ -1,0 +1,214 @@
+#title_bar {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+#sizegrip_bar {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+#content_widget {
+    background-color: white;
+}
+
+#title {
+    padding-right: 92px;
+    color: #2f9a41;
+}
+
+QLineEdit, QPlainTextEdit, #settings_widget_current_user_nick_label {
+    selection-background-color: #2f9a41;
+    selection-color: white;
+}
+
+#login_widget QLineEdit, #register_widget QLineEdit {
+    border-width: 2px;
+    border-style: solid;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-color: black;
+}
+
+#login_widget QLineEdit:focus, #register_widget QLineEdit:focus {
+    border-color: #2f9a41;
+}
+
+QCommandLinkButton {
+    background: none;
+    border: none;
+    font-weight: normal;
+    color: #0047ab;
+}
+
+#valid_symbols_label {
+    color: #7d6d3b;
+    margin-bottom: 10px;
+}
+
+#register_widget QCheckBox:unchecked, #register_email_error_label, #register_nick_error_label,
+#login_error_label {
+    color: #ff0033;
+}
+
+#register_widget QCheckBox:checked {
+    color: #2f9a41;
+}
+
+#register_widget QCheckBox::indicator {
+    border: none;
+}
+
+#length_validator {
+    margin-top: 20px;
+}
+
+#search {
+    margin-right: 10px;
+    padding: 5px 5px 5px 10px;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+}
+
+#search:focus {
+    background-color: white;
+    border: 2px solid #2f9a41;
+}
+
+#to_settings_page_btn {
+    background: transparent;
+    margin-left: 20px;
+}
+
+QListWidget {
+    border: none;
+    outline: 0;
+}
+
+#message_edit {
+    border: none;
+}
+
+#dialog_window {
+    background-color: #2f9a41;
+}
+
+#users_list::item {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+#users_list::item:hover {
+    background-color: #f1f1f1;
+}
+
+#user_list::item:!hover {
+    background-color: white;
+}
+
+#users_list::item:selected {
+    background-color: #2f9a41;
+    color: white;
+}
+
+QScrollBar:vertical {
+    border: none;
+    background-color: #f1f1f1;
+    width: 6px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #a8a8a8;
+    border-radius: 3px;
+}
+
+#send_message_btn {
+    background-color: transparent;
+}
+
+#nick {
+    color: black;
+    font-weight: bold;
+}
+
+#dialog_window::item:hover {
+    background-color: transparent;
+}
+
+#remember_me_checkbox::indicator {
+    width: 20px;
+    height: 20px;
+}
+
+#remember_me_checkbox::indicator:unchecked {
+    image: url("static/unchecked_mark.svg");
+}
+
+#remember_me_checkbox::indicator:checked {
+    image: url("static/checked_mark.svg");
+}
+
+#settings_widget {
+    background-color: qlineargradient(
+        spread:pad, x1:0, y1:0, x2:0, y2:1,
+        stop:0 #fdbb2d,
+        stop:1 #22c1c3
+    );
+}
+
+#title_bar, #sizegrip_bar {
+    background-color: #f1f1f1;
+}
+
+QSizeGrip {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+}
+
+#from_settings_page_to_main_page_btn_1, #from_settings_page_to_main_page_btn_2,
+#from_settings_page_to_main_page_btn_3, #from_settings_page_to_main_page_btn_4 {
+    background: transparent;
+}
+
+#settings_widget_main_widget {
+    background-color: white;
+}
+
+#logout_btn:!hover {
+    border: 2px solid #ff0033;
+    background-color: white;
+    color: #ff0033;
+}
+
+#settings_widget_main_widget {
+    border-radius: 10px;
+}
+
+#settings_widget_content_widget {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+#logout_btn:hover {
+    background-color: #ff0033;
+    color: white;
+    border: none;
+}
+
+#logout_btn {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+#settings_widget_title_widget {
+    background-color: #f1f1f1;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+#settings_widget_current_user_nick_label {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
